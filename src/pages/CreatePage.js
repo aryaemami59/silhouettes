@@ -1,100 +1,145 @@
-import { Container, Col, Row, Button } from 'reactstrap';
-import { HUMANIMAGELAYERS } from '../shared/HUMANIMAGELAYERS';
-import { DOGIMAGELAYERS } from '../shared/DOGIMAGELAYERS';
-import { BACKGROUNDIMAGES } from '../shared/BACKGROUNDIMAGES';
-import defaultImage from '../assets/images/sunset/default-image.png';
-import blankCanvas from '../assets/images/background/blankCanvas.jpg';
-import background from '../assets/images/sunset/background.png'
-// import { selectGender } from '../options/optionSlice';
-import { useState, useRef } from 'react';
-import Thumbnails from '../components/Thumbnails';
-import FilterSelection from '../components/FilterSelection';
-
+import { Container, Col, Row, Button } from "reactstrap";
+import { HUMANIMAGELAYERS } from "../shared/HUMANIMAGELAYERS";
+import { DOGIMAGELAYERS } from "../shared/DOGIMAGELAYERS";
+import { BACKGROUNDIMAGES } from "../shared/BACKGROUNDIMAGES";
+import blankCanvas from "../assets/images/background/blankCanvas.jpg";
+import { useState } from "react";
+import Thumbnails from "../components/Thumbnails";
+import FilterSelection from "../components/FilterSelection";
 
 const CreatePage = () => {
-    const [gender, setGender] = useState("all");
-    const [age, setAge] = useState("all");
-    const [bodyLanguage, setBodyLanguage] = useState("all");
-    console.log(`Gender: ${gender} \n Age: ${age} \n BodyLanguage: ${bodyLanguage}`)
-    // const genderRef = useRef();
-    // function updateGender(e){const gender = genderRef.current.value}
+  const [humans, setHumans] = useState({
+    gender: "all",
+    age: "all",
+    bodyLanguage: "all",
+    breed: "all",
+    tag: "all",
+    humanSelection: 0,
+    dogSelection: 0,
+    BGSelection: 0,
+  });
 
-    // const [filterHuman, setFilterHuman] = useState({
-    //     gender: '',
-    //     age: '',
-    //     bodyLanguage: ''
-    // })
-    // console.log(`Gender: ${filterHuman.gender} - Age: ${filterHuman.age} - Body Language: ${filterHuman.bodyLanguage}`);
+  const {
+    gender,
+    age,
+    bodyLanguage,
+    humanSelection,
+    dogSelection,
+    BGSelection,
+  } = humans;
 
-    const [humanSelection, setHuman] = useState(0)
-    const [dogSelection, setDog] = useState(0)
-    const [BGSelection, setBG] = useState(0)
+  console.log(
+    `Gender: ${gender} \n Age: ${age} \n BodyLanguage: ${bodyLanguage}`
+  );
 
-    const handleClick = (e) =>{
-        if(e.currentTarget.classList.contains('human-thumbnail')){
-            setHuman(e.currentTarget.id)
-            console.log("Human Selection: " + humanSelection);
-        }else if(e.currentTarget.classList.contains('dog-thumbnail')){
-            setDog(e.currentTarget.id)
-            console.log('Dog Selection: ' + dogSelection)
-        }else if(e.currentTarget.classList.contains('bg-thumbnail')){
-            setBG(e.currentTarget.id)
-            console.log('Background Selection: ' + BGSelection)
-        }else{
-            console.log('Problem with selection')
-        }
+  return (
+    <Container>
+      <Row className="create-section-1">
+        <Col md="6" className="preview-col">
+          <Row className="preview-container">
+            <img
+              src={blankCanvas}
+              alt="blank-canvas"
+              className="preview-container__blankCanvas"></img>
+            <img
+              src={BACKGROUNDIMAGES[BGSelection].image}
+              alt="default"
+              className="preview-container__previewBackground"></img>
+            <img
+              src={HUMANIMAGELAYERS[humanSelection].image}
+              alt="human"
+              className="preview-container__previewHuman"></img>
+            <img
+              src={DOGIMAGELAYERS[dogSelection].image}
+              alt="dog"
+              className="preview-container__previewDog"></img>
+          </Row>
+          <Row>
+            <FilterSelection
+              label="Backgrounds"
+              subject="tag"
+              selection="BGSelection"
+              humans={humans}
+              setHumans={setHumans}
+              images={BACKGROUNDIMAGES}
+            />
+            <Thumbnails
+              thumbnails={BACKGROUNDIMAGES}
+              humans={humans}
+              selection="BGSelection"
+              setHumans={setHumans}
+              classIdentifier="bg-thumbnail"
+            />
+          </Row>
+        </Col>
+        <Col md="6" className="ms-5">
+          <div>
+            <h1>Sunset</h1>
+            <p>
+              A high-quality, custom canvas featuring you and your pup
+              silhouetted by a golden sunset{" "}
+            </p>
+          </div>
+          <form>
+            {/* Choose Human */}
+            <FilterSelection
+              selection="humanSelection"
+              val={gender}
+              humans={humans}
+              label="Gender"
+              subject="gender"
+              setHumans={setHumans}
+              images={HUMANIMAGELAYERS}
+            />
+            <FilterSelection
+              humans={humans}
+              selection="humanSelection"
+              label="Age"
+              subject="age"
+              setHumans={setHumans}
+              images={HUMANIMAGELAYERS}
+            />
+            <FilterSelection
+              selection="humanSelection"
+              humans={humans}
+              label="Body Language"
+              subject="bodyLanguage"
+              setHumans={setHumans}
+              images={HUMANIMAGELAYERS}
+            />
+            <Thumbnails
+              thumbnails={HUMANIMAGELAYERS}
+              setHumans={setHumans}
+              humans={humans}
+              selection="humanSelection"
+              classIdentifier="human-thumbnail"
+            />
 
-        const options = [...document.getElementsByClassName('option-container')]
-        options.forEach(option => {
-            if(option.classList.contains('selected')){
-                option.classList.remove('selected')
-            }
-        });
-        e.currentTarget.classList.add('selected')
-      }
+            {/* Choose Dog */}
+            <FilterSelection
+              humans={humans}
+              label="Dog Breed"
+              subject="breed"
+              selection="dogSelection"
+              setHumans={setHumans}
+              images={DOGIMAGELAYERS}
+            />
+            <Thumbnails
+              thumbnails={DOGIMAGELAYERS}
+              humans={humans}
+              selection="dogSelection"
+              setHumans={setHumans}
+              classIdentifier="dog-thumbnail"
+            />
 
+            <Button className="my-3 button-wide-transparentbg">
+              Add to cart
+            </Button>
+          </form>
+        </Col>
+      </Row>
+    </Container>
+  );
+};
 
-
-    return ( 
-        <Container>
-            <Row className='create-section-1'>
-                <Col md='6' className='preview-col'>
-                    <Row className='preview-container'>
-                        <img src={blankCanvas} alt='blank-canvas' className='preview-container__blankCanvas'></img>
-                        <img src={BACKGROUNDIMAGES[BGSelection].image} alt="default-image" className='preview-container__previewBackground'></img>
-                        <img src={HUMANIMAGELAYERS[humanSelection].image} alt='human-image' className='preview-container__previewHuman'></img>
-                        <img src={DOGIMAGELAYERS[dogSelection].image} alt='dog-image' className='preview-container__previewDog'></img>
-                    </Row>
-                    <Row>
-                        <FilterSelection label='Backgrounds' subject='tag' setHuman={setBG} images={BACKGROUNDIMAGES}/> 
-                        <Thumbnails thumbnails={BACKGROUNDIMAGES} handleClick={handleClick} classIdentifier='bg-thumbnail'/>
-                    </Row>
-
-                </Col>
-                <Col md='6' className='ms-5'>
-                    <div>
-                        <h1>Sunset</h1>
-                        <p>A high-quality, custom canvas featuring you and your pup silhouetted by a golden sunset </p>
-                    </div>
-                    <form>
-                        {/* Choose Human */}
-                        <FilterSelection label='Gender' subject='gender' setFilter={setGender} images={HUMANIMAGELAYERS}/>
-                        <FilterSelection label='Age' subject='age' setFilter={setAge} images={HUMANIMAGELAYERS}/>
-                        <FilterSelection label='Body Language' subject='bodyLanguage' setFilter={setBodyLanguage} images={HUMANIMAGELAYERS}/>
-                        <Thumbnails thumbnails={HUMANIMAGELAYERS} handleClick={handleClick} classIdentifier='human-thumbnail'/>
-
-                        {/* Choose Dog */}
-                        <FilterSelection label='Dog Breed' subject='breed' setHuman={setDog} images={DOGIMAGELAYERS}/>
-                        <Thumbnails thumbnails={DOGIMAGELAYERS} handleClick={handleClick} classIdentifier='dog-thumbnail'/>
-
-                        <Button className='my-3 button-wide-transparentbg'>Add to cart</Button>
-
-                    </form>
-                </Col>
-            </Row>
-            
-        </Container>
-     );
-}
- 
 export default CreatePage;
